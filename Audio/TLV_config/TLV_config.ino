@@ -1,18 +1,23 @@
 #include <Wire.h>
-
-#define TVL_RST_PIN;
+#include <I2S.h>
 
 void W(char r, char d) {
+  Wire.beginTransmission(0x30);
   Wire.write(0x30);
   Wire.write(r);
   Wire.write(d);
+  Wire.endTransmission();
 }
 
 void setup() {
-  Wire.begin(8);
-  Serial.begin(9600);
+  Wire.begin();
+  Serial.begin(19200);
 
   //DRIVE RESET HIGH FOR AT LEAST 10 NS
+
+  digitalWrite(0,LOW);
+  delay(1);
+  digitalWrite(0,HIGH);
 
   // INITIAL CONFIG
 
@@ -64,9 +69,10 @@ void setup() {
   W(0x51,0xC2); // power up both ADCs
   W(0x52,0x00); // unmute volume control and set gain to 0
 
+  int ret = I2S.begin(I2S_PHILIPS_MODE,8000,16);
+
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-
+  Serial.println(I2S.read());
 }
