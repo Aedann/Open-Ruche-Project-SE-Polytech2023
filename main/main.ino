@@ -3,7 +3,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include "HX711.h"
-#include "DHT11.h"
+#include "DHT22.h"
 
 // Serial-related DEFINEs
 
@@ -12,7 +12,7 @@
 // DHT-related
 
 const int DHT_PIN = 7;
-DHT11 dht(DHT_PIN);
+DHT22 dht22(DHT_PIN);
 
 // OneWire Temp Probe-related
 const int ONEWIRE_PIN_A = 0;
@@ -47,7 +47,7 @@ short con = 0;
 // Buzzer-related
 const int BUZZER_PIN = 10;
 
-enum t_STATE {IDLE, CONNECTING, ERR, MEASURE, SENDING};
+enum t_STATE {IDLE, CONNECTING, SENDING};
 t_STATE State;
 
 void init_serial() {
@@ -90,12 +90,6 @@ void setup() {
 }
 
 void loop() {
-  short inTemp;
-  short inHum;
-  short tempA;
-  short tempB;
-  short HiveWeight;
-  short batteryCharge;
   switch(State) {
     case CONNECTING:
     {
@@ -108,33 +102,31 @@ void loop() {
         modem.dataRate(5);   // switch to SF7
         delay(100);          // because ... more stable
         err_count=0;
-        State = MEASURE;
+        State = SENDING;
       }
-      break;
-    }
-
-    case MEASURE:
-    {
-      // DHT Measures
-      inTemp = ((float)dht.readTemperature())*10;
-      inHum = ((float)dht.readHumidity())*10;
-      // OneWire Measures
-      probe_a.requestTemperatures();
-      probe_b.requestTemperatures();
-      tempA = ((float)probe_a.getTempCByIndex(0)*10);
-      tempB = ((float)probe_b.getTempCByIndex(0)*10);
-      // Scale Measures
-      HiveWeight = (scale.get_units(10) - SCALE_METALZERO);
-      // Battery Measures
-      float batteryTemp = analogRead(BATTERY_PIN);
-      batteryTemp = (batteryTemp / 1023.0) * 3.3;
-      batteryCharge = (float)((batteryTemp - MINVOLTAGE)/(MAXVOLTAGE - MINVOLTAGE) * 100);
-      State = SENDING;
       break;
     }
 
     case SENDING:
     {
+      // DHT Measures
+      short inTemp = ((float)dht22.getTemperature())*10;
+      short inHum = ((float)dht22.getHumidity())*10;
+      // OneWire Measures
+      probe_a.requestTemperatures();
+      probe_b.requestTemperatures();
+      short tempA = ((float)probe_a.getTempCByIndex(0)*10);
+      short tempB = ((float)probe_b.getTempCByIndex(0)*10);
+      // Scale Measures
+      short HiveWeight = (scale.get_units(10) - SCALE_METALZERO);
+      Serial.println(HiveWeight);
+      // Battery Measures
+      float batteryTemp = analogRead(BATTERY_PIN);
+      batteryTemp = (batteryTemp / 1023.0) * 3.3;
+      short batteryCharge = (float)((batteryTemp - MINVOLTAGE)/(MAXVOLTAGE - MINVOLTAGE) * 100);
+      short batteryVoltage = batteryTemp;
+
+      // SENDING
       int err=0;
       modem.beginPacket();
       modem.write(inHum);
@@ -142,7 +134,7 @@ void loop() {
       modem.write(tempA);
       modem.write(tempB);
       modem.write(HiveWeight);
-      modem.write(batteryCharge);  
+      modem.write(batteryVoltage);  
       err = modem.endPacket();
       if ( err <= 0 ) {
         Serial.print("Error : ");
@@ -158,9 +150,12 @@ void loop() {
     }
     
     case IDLE:
+    {
       delay(20000);
-      State = MEASURE;
+      State = SENDING;
       break;
+
+    }
 
   }
 }
