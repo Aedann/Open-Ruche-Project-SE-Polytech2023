@@ -25,14 +25,17 @@ DallasTemperature probe_b(&oneWire_b);
 // Scale-related
 #define SCALE_MEANSF 286.53
 #define SCALE_METALZERO 1258.7
-const int LOADCELL_DOUT_PIN = 2;
-const int LOADCELL_SCK_PIN = 3;
+const int LOADCELL_DOUT_PIN = 5;
+const int LOADCELL_SCK_PIN = 6;
 HX711 scale;
 
 // Battery-related
 #define MAXVOLTAGE 3.3
 #define MINVOLTAGE 2.5
 const int BATTERY_PIN = A0;
+
+//I2S-related
+//Allocated pins : 2 (CLK), 3 (WS), and A6 (SD)
 
 // WAN-related 
 const String appEui = "A8610A34353B6010";
