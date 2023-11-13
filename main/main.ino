@@ -124,7 +124,7 @@ void loop() {
       float batteryTemp = analogRead(BATTERY_PIN);
       batteryTemp = (batteryTemp / 1023.0) * 3.3;
       short batteryCharge = (float)((batteryTemp - MINVOLTAGE)/(MAXVOLTAGE - MINVOLTAGE) * 100);
-      short batteryVoltage = batteryTemp;
+      short batteryVoltage = batteryTemp*100;
 
       // SENDING
       int err=0;
