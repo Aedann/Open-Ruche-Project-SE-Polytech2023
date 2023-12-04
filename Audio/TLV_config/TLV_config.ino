@@ -11,7 +11,7 @@ void W(char r, char d) {
 
 void setup() {
   Wire.begin();
-  Serial.begin(19200);
+  Serial.begin(500000);
 
   //DRIVE RESET HIGH FOR AT LEAST 10 NS
 
@@ -69,6 +69,7 @@ void setup() {
   W(0x51,0xC2); // power up both ADCs
   W(0x52,0x00); // unmute volume control and set gain to 0
 
+  // Pins : 
   int ret = I2S.begin(I2S_PHILIPS_MODE,8000,16);
 
 }
