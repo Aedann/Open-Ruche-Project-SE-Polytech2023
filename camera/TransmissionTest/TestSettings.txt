@@ -1,0 +1,1 @@
+Arduino alimentée en USB, ESP32 en 3v3 sur la arduino, AVEC GROUND COMMUN.

@@ -1,0 +1,21 @@
+errCode1 : 
+	0 -- Camera initialized
+	1 -- Failed to initialize Camera
+	2 -- ERR: Failed to allocate snapshot buffer!
+	3 -- Failed to capture image
+	4 -- ERR: Camera is not initialized
+	5 -- Camera capture failed
+	6 -- Conversion failed
+
+errCode2 : 
+	ERR: Failed to run classifier : 
+	EI_IMPULSE_ERROR err = run_classifier(&signal, &result, debug_nn);
+
+errCode3 : 
+	Camera init failed with error :
+	esp_err_t err = esp_camera_init(&camera_config);
+	//Convertir le code en hexa pour se référer à la doc officielle.
+
+errCode4 :
+	Camera deinit failed : 
+	esp_err_t err = esp_camera_deinit();
