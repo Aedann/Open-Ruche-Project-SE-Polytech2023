@@ -16,8 +16,8 @@
 #define METALZERO 1258.7
 
 // HX711 circuit wiring
-const int LOADCELL_DOUT_PIN = 2;
-const int LOADCELL_SCK_PIN = 3;
+const int LOADCELL_DOUT_PIN = 9;
+const int LOADCELL_SCK_PIN = 8;
 
 HX711 scale;
 

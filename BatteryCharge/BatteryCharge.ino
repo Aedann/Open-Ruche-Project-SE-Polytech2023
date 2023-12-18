@@ -18,6 +18,7 @@ void setup() {
     float batteryCharge = (voltage - TensionMin) / (TensionMax - TensionMin) * 100;
     
     // Affiche la charge de la batterie sur le moniteur série 
+    Serial.print("Mesure : "); Serial.println(batteryValue);
     Serial.print("Tension de la batterie : "); Serial.print(voltage); 
     Serial.println(" V"); 
     Serial.print("Charge de la batterie : "); Serial.print(batteryCharge);
