@@ -49,7 +49,7 @@ void loop() {
     //sentBytes = Serial1.write(dataSent, DATA_SIZE);
 
      //Correction du format de spécificateur pour imprimer un uint8_t
-  char charToSend[100];  // Ajustez la taille selon vos besoins
+  char charToSend[300];  // Ajustez la taille selon vos besoins
   snprintf(charToSend, sizeof(charToSend), "<%u,%s, %.2f, %u,%u,%u,%u,%s, %.2f, %u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u>",
             SendingData.NoObjects,
              SendingData.label1, SendingData.value1,

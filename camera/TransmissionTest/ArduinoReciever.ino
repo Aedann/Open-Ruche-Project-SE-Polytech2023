@@ -12,30 +12,30 @@ uint32_t integerFromPC = 0;
 float floatFromPC = 0.0;
 
 struct SendingData_t{
-    uint32_t NoObjects;
-    char label1[numChars];
-    float value1;
-    uint32_t x1;
-    uint32_t y1;
-    uint32_t width1;
-    uint32_t height1;
-    char label2[numChars];
-    float value2;
-    uint32_t x2;
-    uint32_t y2;
-    uint32_t width2;
-    uint32_t height2;
-    uint32_t DSP;
-    uint32_t Classification;
-    uint32_t Anomaly;
-    uint32_t errCode1;
-    uint32_t errCode2;
-    uint32_t errCode3;
-    uint32_t errCode4;
+    uint32_t NoObjects;         //1 s'il n'y a pas d'attaque de frelon et 0 sinon
+    char label1[numChars];      //Nom du premier objet detecté (Hornet ou Bees)
+    float value1;               //Pourcentage de certitude
+    uint32_t x1;                //Coordonnée en x de la bounding_boxes 
+    uint32_t y1;                //Coordonnée en y de la bounding_boxes 
+    uint32_t width1;            //Coordonnée en w de la bounding_boxes 
+    uint32_t height1;           //Coordonnée en h de la bounding_boxes 
+    char label2[numChars];      //Nom du deuxième objet detecté (Hornet ou Bees)
+    float value2;               //Pourcentage de certitude
+    uint32_t x2;                //Coordonnée en x de la bounding_boxes 
+    uint32_t y2;                //Coordonnée en y de la bounding_boxes 
+    uint32_t width2;            //Coordonnée en w de la bounding_boxes 
+    uint32_t height2;           //Coordonnée en h de la bounding_boxes 
+    uint32_t DSP;               //Durée de la Traitement du signal digital 
+    uint32_t Classification;    //Durée du calcul de classification
+    uint32_t Anomaly;           //Durée du calcul du taux d'anomalie
+    uint32_t errCode1;          //Voir Doc_SendingData_t.txt
+    uint32_t errCode2;          //Voir Doc_SendingData_t.txt
+    uint32_t errCode3;          //Voir Doc_SendingData_t.txt
+    uint32_t errCode4;          //Voir Doc_SendingData_t.txt};
 };
 
 
-struct SendingData_t SendingData = {0,"Hornet", 0.66, 314,15,9,26,"Bees", 0.66, 314,15,9,26,45,90,180,404,200,301,501};
+struct SendingData_t SendingData = {1,"", 0.0, 0,0,0,0,"", 0, 0,0,0,0,0,0,0,0,0,0,0};
 
 boolean newData = false;
 
@@ -105,64 +105,44 @@ void parseData() {      // split the data into its parts
 
     strtokIndx = strtok(tempChars,",");      // get the first part - the string
     sscanf(strtokIndx,"%"SCNu32,&SendingData.NoObjects); // copy it to SendingData.NoObjects
-
     strtokIndx = strtok(NULL, ",");
-    strcpy(SendingData.label1, strtokIndx); // copy it to SendingData.label1
- 
+    strcpy(SendingData.label1, strtokIndx); // copy it to SendingData.label1 
     strtokIndx = strtok(NULL, ",");
     SendingData.value1 = atof(strtokIndx);     // copy it to SendingData.value1
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx,"%"SCNu32,&SendingData.x1);     // copy it to SendingData.x1
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx,"%"SCNu32,&SendingData.y1);     // copy it to SendingData.y1
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx,"%"SCNu32,&SendingData.width1);     // copy it to SendingData.width1
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx,"%"SCNu32,&SendingData.height1);     // copy it to SendingData.height1
-
     strtokIndx = strtok(NULL, ",");
     strcpy(SendingData.label2, strtokIndx);
-
     strtokIndx = strtok(NULL, ",");
     SendingData.value2 = atof(strtokIndx);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.x2);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.y2);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.width2);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.height2);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.DSP);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.Classification);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.Anomaly);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.errCode1);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.errCode2);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.errCode3);
-
     strtokIndx = strtok(NULL, ",");
     sscanf(strtokIndx, "%" SCNu32, &SendingData.errCode4);
-
 }
 
 //============
@@ -208,4 +188,19 @@ void showParsedData() {
     Serial.println(SendingData.errCode3);
     Serial.print("SendingData.errCode4 :");
     Serial.println(SendingData.errCode4);
+}
+
+//Pour envoyer sur TTN
+void sendStructData(const SendingData_t &data) {
+    const uint16_t bufferSize = 256;
+    char buffer[bufferSize];
+
+    snprintf(buffer, bufferSize,
+             "%u,%s,%.2f,%u,%u,%u,%u,%s,%.2f,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u,%u",
+             data.NoObjects, data.label1, data.value1, data.x1, data.y1, data.width1, data.height1,
+             data.label2, data.value2, data.x2, data.y2, data.width2, data.height2, data.DSP,
+             data.Classification, data.Anomaly, data.errCode1, data.errCode2, data.errCode3,
+             data.errCode4);
+
+    modem.write(buffer, strlen(buffer));
 }
