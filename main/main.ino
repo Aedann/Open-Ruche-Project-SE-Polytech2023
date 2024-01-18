@@ -25,7 +25,7 @@ const int LOADSWITCH_DONE_PIN = 6;
 
 // Power-related
 #define WAKEUP_DELAY_MS 6000
-int sleep_time_ms = 20000;
+int sleep_time_ms = 1200000;
 
 // WAN-related 
 const String appEui = "A8610A34353B6010";
@@ -116,6 +116,7 @@ void loop() {
 
     case WAKING:
     {
+      myFFT(binVec);
       wake_TPL();
       // Serial.println("WAKING UP !");
       
@@ -143,7 +144,7 @@ void loop() {
       short batteryVoltage = 0;
       // batteryVoltage = read_battery_voltage();
       // Audio Measures
-      myFFT(binVec);
+      // myFFT(binVec);
       // Light Measures
       short lightLevel = myLux.lightStrengthLux();
 

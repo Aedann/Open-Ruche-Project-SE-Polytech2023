@@ -141,9 +141,9 @@ void ADC_Handler() {
   int32_t signedSample;
 
   sample = ADC->RESULT.reg;
-  // if (sample & 0x800) {
-  //   sample |= 0xfffff000;
-  // }
+  if (sample & 0x800) {
+    sample |= 0xfffff000;
+  }
   signedSample = (int32_t) sample;
   sampleVec[sampleCount] = signedSample;
   ADC->INTFLAG.bit.RESRDY = 0x1;
